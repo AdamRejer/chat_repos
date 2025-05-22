@@ -388,7 +388,6 @@ sprawdzać, czy na liście reprezentowanej przez zmienną Lista, znajduje się e
 zwrócić wskaźnik do tego elementu. W przeciwnym wypadku funkcja
 powinna zwrócić wartość NULL.
 ```
-// Plik: zad7_3_15.c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -420,8 +419,13 @@ int main() {
         printf("Nie znaleziono.\n");
     return 0;
 }
-
-// Plik: zad7_3_17.c
+```
+# 7.3.17
+Napisz funkcję usun o dwóch argumentach Lista typu element*
+i a typu int. Funkcja powinna usuwać z listy reprezentowanej
+przez zmienną Lista element o wartości a pola i (o ile taki element
+znajduje się na liście).
+```
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -470,8 +474,12 @@ int main() {
     printf("\n");
     return 0;
 }
-
-// Plik: zad7_3_18.c
+```
+# 7.3.18
+Napisz funkcję usunw o dwóch argumentach Lista i elem typu
+element*. Funkcja powinna usuwać z listy reprezentowanej
+przez zmienną Lista element wskazywany przez zmienną elem.
+```
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -521,3 +529,341 @@ int main() {
     return 0;
 }
 ```
+# 7.3.20
+Napisz funkcję zeruj, która dostaje jako argument listę wskaźnikową o elementach typu element i nadaje wartość 0 polom i we wszystkich elementach listy. Napisz dwie wersje funkcji: dla list z głową
+i dla list bez głowy.
+```
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct element {
+    int wartosc;
+    struct element* nast;
+} element;
+
+void zeruj_bez_glowy(element* lista) {
+    while (lista != NULL) {
+        lista->wartosc = 0;
+        lista = lista->nast;
+    }
+}
+
+void zeruj_z_glowa(element* glowa) {
+    if (glowa == NULL) return;
+    zeruj_bez_glowy(glowa->nast);
+}
+
+int main() {
+    element* glowa = malloc(sizeof(element));
+    glowa->nast = malloc(sizeof(element));
+    glowa->nast->wartosc = 10;
+    glowa->nast->nast = NULL;
+
+    zeruj_z_glowa(glowa);
+    printf("Po wyzerowaniu: %d\n", glowa->nast->wartosc);
+    free(glowa->nast);
+    free(glowa);
+    return 0;
+}
+```
+# 7.3.21
+Napisz funkcję bezwzględna, która dostaje jako argument listę wskaźnikową o elementach typu element i zapisuje do pól i wszystkich
+elementów listy wartość bezwzględną ich pierwotnej wartości. Napisz
+dwie wersje funkcji: dla list z głową i dla list bez głowy.
+```
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct element {
+    int wartosc;
+    struct element* nast;
+} element;
+
+void bezwzgledna_bez_glowy(element* lista) {
+    while (lista != NULL) {
+        if (lista->wartosc < 0)
+            lista->wartosc = -lista->wartosc;
+        lista = lista->nast;
+    }
+}
+
+void bezwzgledna_z_glowa(element* glowa) {
+    if (glowa == NULL) return;
+    bezwzgledna_bez_glowy(glowa->nast);
+}
+
+int main() {
+    element* glowa = malloc(sizeof(element));
+    glowa->nast = malloc(sizeof(element));
+    glowa->nast->wartosc = -7;
+    glowa->nast->nast = NULL;
+
+    bezwzgledna_z_glowa(glowa);
+    printf("Po bezwzglednej: %d\n", glowa->nast->wartosc);
+    free(glowa->nast);
+    free(glowa);
+    return 0;
+}
+```
+# 7.3.22
+Zdefiniuj strukturę trojkat mogącą służyć jako typ elementów listy
+jednokierunkowej. Struktura trojkat powinna posiadać pola służące
+do przechowywania wszystkich boków trójkąta oraz jego pola.
+Napisz funkcję pole, która otrzymuje w argumencie listę wskaźnikową
+o elementach typu trojkat i we wszystkich elementach listy do odpowiedniego pola wstawia wartość pola trójkąta o bokach, których długość przechowuje dana struktura. Napisz dwie wersje funkcji: dla list
+z głową i dla list bez głowy.
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct trojkat {
+    double a, b, c, pole;
+    struct trojkat* nast;
+} trojkat;
+
+double oblicz_pole(double a, double b, double c) {
+    double p = (a + b + c) / 2;
+    return sqrt(p * (p - a) * (p - b) * (p - c));
+}
+
+void pole_bez_glowy(trojkat* lista) {
+    while (lista != NULL) {
+        lista->pole = oblicz_pole(lista->a, lista->b, lista->c);
+        lista = lista->nast;
+    }
+}
+
+void pole_z_glowa(trojkat* glowa) {
+    if (glowa == NULL) return;
+    pole_bez_glowy(glowa->nast);
+}
+
+int main() {
+    trojkat* glowa = malloc(sizeof(trojkat));
+    glowa->nast = malloc(sizeof(trojkat));
+    glowa->nast->a = 3;
+    glowa->nast->b = 4;
+    glowa->nast->c = 5;
+    glowa->nast->nast = NULL;
+
+    pole_z_glowa(glowa);
+    printf("Pole trojkata: %.2f\n", glowa->nast->pole);
+    free(glowa->nast);
+    free(glowa);
+    return 0;
+}
+```
+# 7.3.24
+Napisz funkcję suma, która dostaje jako argument listę wskaźnikową o elementach typu element i zwraca jako wartość sumę pól i ze wszystkich elementów listy. Napisz dwie wersje funkcji: dla list z głową i dla list bez głowy.
+```
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct element {
+    int wartosc;
+    struct element* nast;
+} element;
+
+int suma_bez_glowy(element* lista) {
+    int suma = 0;
+    while (lista != NULL) {
+        suma += lista->wartosc;
+        lista = lista->nast;
+    }
+    return suma;
+}
+
+int suma_z_glowa(element* glowa) {
+    if (glowa == NULL) return 0;
+    return suma_bez_glowy(glowa->nast);
+}
+
+int main() {
+    element* glowa = malloc(sizeof(element));
+    glowa->nast = malloc(sizeof(element));
+    glowa->nast->wartosc = 2;
+    glowa->nast->nast = malloc(sizeof(element));
+    glowa->nast->nast->wartosc = 3;
+    glowa->nast->nast->nast = NULL;
+
+    printf("Suma: %d\n", suma_z_glowa(glowa));
+    return 0;
+}
+```
+# 7.3.26
+Napisz funkcję minimum, która dostaje jako argument Lista listę wskaźnikową o elementach typu element i zwraca jako wartość
+wskaźnik do elementu listy o najmniejszej wartości pola i. Napisz
+dwie wersje funkcji: dla list z głową i dla list bez głowy
+```
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct element {
+    int wartosc;
+    struct element* nast;
+} element;
+
+element* minimum_bez_glowy(element* lista) {
+    if (!lista) return NULL;
+    element* min = lista;
+    while (lista != NULL) {
+        if (lista->wartosc < min->wartosc)
+            min = lista;
+        lista = lista->nast;
+    }
+    return min;
+}
+
+element* minimum_z_glowa(element* glowa) {
+    if (!glowa) return NULL;
+    return minimum_bez_glowy(glowa->nast);
+}
+
+int main() {
+    element* glowa = malloc(sizeof(element));
+    glowa->nast = malloc(sizeof(element));
+    glowa->nast->wartosc = 7;
+    glowa->nast->nast = malloc(sizeof(element));
+    glowa->nast->nast->wartosc = 3;
+    glowa->nast->nast->nast = NULL;
+
+    element* min = minimum_z_glowa(glowa);
+    printf("Minimum: %d\n", min->wartosc);
+    return 0;
+}
+```
+# 7.3.28
+Napisz funkcję, która dostaje jako argument listę o elementach typu element i zwraca jako wartość największą na wartość bezwzględną
+spośród różnic pomiędzy polami i w różnych elementach listy otrzymanej w argumencie. Zakładamy, że otrzymana w argumencie funkcji lista jest co najmniej dwuelementowa. Napisz dwie wersje funkcji:
+dla list z głową i dla list bez głowy
+```
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct element {
+    int wartosc;
+    struct element* nast;
+} element;
+
+int max_roznica_bez_glowy(element* lista) {
+    int max = 0;
+    for (element* i = lista; i != NULL; i = i->nast) {
+        for (element* j = lista; j != NULL; j = j->nast) {
+            int roznica = i->wartosc - j->wartosc;
+            if (roznica < 0) roznica = -roznica;
+            if (roznica > max)
+                max = roznica;
+        }
+    }
+    return max;
+}
+
+int max_roznica_z_glowa(element* glowa) {
+    if (!glowa) return 0;
+    return max_roznica_bez_glowy(glowa->nast);
+}
+
+int main() {
+    element* glowa = malloc(sizeof(element));
+    glowa->nast = malloc(sizeof(element));
+    glowa->nast->wartosc = 1;
+    glowa->nast->nast = malloc(sizeof(element));
+    glowa->nast->nast->wartosc = 9;
+    glowa->nast->nast->nast = NULL;
+
+    printf("Max roznica: %d\n", max_roznica_z_glowa(glowa));
+    return 0;
+}
+```
+# 7.3.29
+Napisz funkcję kopiuj, która jako argument otrzymuje jednokierunkową listę wskaźnikową o elementach typu element, tworzy kopię
+otrzymanej w argumencie listy i zwraca jako wartość wskaźnik do kopii. Napisz dwie wersje funkcji: dla list z głową i dla list bez głowy
+```
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct element {
+    int wartosc;
+    struct element* nast;
+} element;
+
+element* kopiuj_bez_glowy(element* lista) {
+    if (lista == NULL) return NULL;
+    element* kopia = malloc(sizeof(element));
+    kopia->wartosc = lista->wartosc;
+    kopia->nast = NULL;
+
+    element* ogon = kopia;
+    lista = lista->nast;
+    while (lista != NULL) {
+        ogon->nast = malloc(sizeof(element));
+        ogon = ogon->nast;
+        ogon->wartosc = lista->wartosc;
+        ogon->nast = NULL;
+        lista = lista->nast;
+    }
+    return kopia;
+}
+
+element* kopiuj_z_glowa(element* glowa) {
+    if (!glowa) return NULL;
+    element* nowa_glowa = malloc(sizeof(element));
+    nowa_glowa->nast = kopiuj_bez_glowy(glowa->nast);
+    return nowa_glowa;
+}
+
+int main() {
+    element* glowa = malloc(sizeof(element));
+    glowa->nast = malloc(sizeof(element));
+    glowa->nast->wartosc = 4;
+    glowa->nast->nast = NULL;
+
+    element* nowa = kopiuj_z_glowa(glowa);
+    printf("Kopia: %d\n", nowa->nast->wartosc);
+    return 0;
+}
+```
+# 7.3.31
+Napisz funkcję, która dostaje w argumentach wskaźnik do listy
+wskaźnikowej o elementach typu element i odwraca kolejność elementów listy. Napisz dwie wersje funkcji: dla list z głową i dla list bez głowy. W wersji dla list bez głowy funkcja powinna zwracać wskaźnik
+do pierwszego elementu odwróconej listy.
+```
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct element {
+    int wartosc;
+    struct element* nast;
+} element;
+
+element* odwroc_bez_glowy(element* lista) {
+    element* prev = NULL;
+    element* curr = lista;
+    while (curr != NULL) {
+        element* next = curr->nast;
+        curr->nast = prev;
+        prev = curr;
+        curr = next;
+    }
+    return prev;
+}
+
+element* odwroc_z_glowa(element* glowa) {
+    if (!glowa) return NULL;
+    glowa->nast = odwroc_bez_glowy(glowa->nast);
+    return glowa;
+}
+
+int main() {
+    element* glowa = malloc(sizeof(element));
+    glowa->nast = malloc(sizeof(element));
+    glowa->nast->wartosc = 1;
+    glowa->nast->nast = malloc(sizeof(element));
+    glowa->nast->nast->wartosc = 2;
+    glowa->nast->nast->nast = NULL;
+
+    glowa = odwroc_z_glowa(glowa);
+    printf("Po odwroceniu: %d\n", glowa->nast->wartosc);
+    return 0;
+}
